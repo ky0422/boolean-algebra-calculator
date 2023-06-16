@@ -2,7 +2,7 @@
     "name": "app",
     "type": "module",
     "scripts": {
-        "dev": "vite --host",
+        "dev": "npm run build && vite --host",
         "build:tsc": "if [ -d build ]; then rm -rf build; fi; tsc",
         "build": "npm run build:tsc && vite build",
         "preview": "vite preview",
