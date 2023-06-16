@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "useDefineForClassFields": true,
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "esModuleInterop": false,
+        "skipLibCheck": true,
+        "allowJs": false,
+        "strict": true,
+        "module": "ESNext",
+        "noEmit": true,
+        "jsx": "react-jsx"
+    },
+    "include": ["src", "src/context", "./global.d.ts"],
+    "references": [{ "path": "./tsconfig.node.json" }]
+}

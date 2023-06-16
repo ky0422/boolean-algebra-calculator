@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global */
+
+@font-face {
+    font-family: 'ROKAF';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/resources/fonts/ROKAF Sans Bold.ttf') format('truetype');
+}
+
+* {
+    font-family: 'ROKAF', sans-serif;
+}
+
+html {
+    background-color: #e0e0e0;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+/* Classes */
+
+.text-stroke {
+    -webkit-text-stroke: 2px #fff;
+}
+
+.text-stroke-light {
+    -webkit-text-stroke: 2px #000;
+}
+
+.text-stroke-1 {
+    -webkit-text-stroke: 1px #fff;
+}
+
+.text-stroke-light-1 {
+    -webkit-text-stroke: 1px #000;
+}
+
+.word-spacing {
+    word-spacing: 3px;
+}
+
+/* Scroll styles */
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: #25292e;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #363c44;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #414851;
+}
