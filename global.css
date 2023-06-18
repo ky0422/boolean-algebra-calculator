@@ -11,9 +11,9 @@
     src: url('/resources/fonts/ROKAF Sans Bold.ttf') format('truetype');
 }
 
-* {
+/* * {
     font-family: 'ROKAF', sans-serif;
-}
+} */
 
 html {
     background-color: #e0e0e0;
