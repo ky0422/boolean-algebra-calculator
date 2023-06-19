@@ -1,44 +1,91 @@
 import React from 'react'
-import Calculator, { Bit, expression_to_string } from './calculator'
+import Calculator, { Bit, CalcProcess, expression_to_string } from './calculator/calculator'
 import Input from './components/input'
-import { Parser } from './parser'
-import Lexer from './tokenizer'
+import { Parser } from './calculator/parser'
+import Lexer from './calculator/tokenizer'
+
+enum CalculateResultKind {
+    Success,
+    Error,
+}
+
+interface CalculateSuccess {
+    kind: CalculateResultKind.Success
+    result: Bit
+    parsed: string
+    expression: string
+    processes: CalcProcess[]
+}
+
+interface CalculateError {
+    kind: CalculateResultKind.Error
+    errors: string[]
+}
 
 const App: React.FC = () => {
-    const p_ref = React.useRef<HTMLParagraphElement>(null)
+    const [value, setValue] = React.useState<CalculateSuccess | CalculateError | null>(null)
+
     const constants: Record<string, Bit> = {
         X: Bit.One,
         Y: Bit.Zero,
         Z: Bit.One,
     }
 
-    const callback = (value: string) => {
-        console.log(value)
-        const parser = new Parser(new Lexer(value))
+    const callback = (input: string) => {
+        const parser = new Parser(new Lexer(input))
         const parsed = parser.parse()
 
-        console.log(parser.errors)
-
         if (!parsed) {
-            if (p_ref.current) p_ref.current.innerHTML = 'Invalid expression'
+            setValue({
+                kind: CalculateResultKind.Error,
+                errors: parser.errors,
+            })
         } else {
             const calculator = new Calculator(constants)
             const result = calculator.calculate(parsed)
 
-            if (p_ref.current) 
-            {
-                console.log(result)
-                p_ref.current.innerHTML = `Expression: ${expression_to_string(parsed)}`
-                if (result) p_ref.current.innerHTML += `<br />Result: ${result}`
-                else p_ref.current.innerHTML += `<br />Error: ${calculator.errors}`
+            if (result === null) {
+                setValue({
+                    kind: CalculateResultKind.Error,
+                    errors: calculator.errors,
+                })
+            } else {
+                setValue({
+                    kind: CalculateResultKind.Success,
+                    result,
+                    parsed: expression_to_string(parsed),
+                    expression: expression_to_string(parsed, constants),
+                    processes: calculator.calc_processes,
+                })
             }
         }
+
+        console.log(value)
     }
 
     return (
-        <div>
-            <Input submit={callback} value='' />
-            <p ref={p_ref}></p>
+        <div className='flex flex-col content-center justify-center text-center h-screen'>
+            <Input
+                submit={callback}
+                value=''
+                textClassNames='border-2 border-gray-400 rounded-lg p-2 m-2'
+                submitClassNames='border-2 border-gray-400 rounded-lg p-2 m-2'
+            />
+            {value &&
+                (value.kind === CalculateResultKind.Success ? (
+                    <div>
+                        <p>Parsed: {value.parsed}</p>
+                        <p>Expression: {value.expression}</p>
+                        <p>Result: {value.result}</p>
+                        <p>Processes:</p>
+                        <ul>{value && value.processes.map((process, index) => <li key={index}>{CalcProcess.to_string(process)}</li>)}</ul>
+                    </div>
+                ) : (
+                    <div>
+                        <p>Errors:</p>
+                        <ul>{value && value.errors.map((error, index) => <li key={index}>{error}</li>)}</ul>
+                    </div>
+                ))}
         </div>
     )
 }
