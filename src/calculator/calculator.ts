@@ -1,11 +1,11 @@
 export enum BinaryLogicalOperator {
-    AND = "AND",
-    OR = "OR",
-    XOR = "XOR",
+    AND = 'AND',
+    OR = 'OR',
+    XOR = 'XOR',
 }
 
 export enum UnaryLogicalOperator {
-    NOT = "NOT",
+    NOT = 'NOT',
 }
 
 export interface LogicalOperation {
@@ -55,7 +55,7 @@ export const expression_to_string = (expression: LogicalExpression, variables?: 
         case LogicalExpressionKind.Variable: {
             if (variables) {
                 const value = variables[expression.name]
-                if (!value) return expression.name
+                if (value === null) return expression.name
                 return value.toString()
             }
             return expression.name
@@ -68,18 +68,19 @@ export enum Bit {
     One = 1,
 }
 
-interface CalcProcess {
+export interface CalcProcess {
     operator: string
-    left?: {
-        value: Bit
-        ref_index: number | string
-    }
-    right: {
-        value: Bit
-        ref_index: number | string
-    }
+    left?: Bit
+    right: Bit
     result: Bit
     index: number
+}
+
+export class CalcProcess {
+    static to_string(process: CalcProcess): string {
+        const left = process.left !== undefined ? `${process.left} ` : ''
+        return `${left}${process.operator} ${process.right} = ${process.result}`
+    }
 }
 
 export default class Calculator {
@@ -124,13 +125,10 @@ export default class Calculator {
                 break
         }
 
-        const left_ref_index = this.calc_processes_index - 2
-        const right_ref_index = this.calc_processes_index - 1
-
         this.calc_processes.push({
             operator: expression.operator,
-            left: left_ref_index >= 0 ? { value: left, ref_index: left_ref_index } : { value: left, ref_index: (expression.left as Variable).name },
-            right: right_ref_index >= 0 ? { value: right, ref_index: right_ref_index } : { value: right, ref_index: (expression.left as Variable).name },
+            left,
+            right,
             result,
             index: this.calc_processes_index++,
         })
@@ -168,11 +166,9 @@ export default class Calculator {
                 break
         }
 
-        const ref_index = this.calc_processes_index - 1
-
         this.calc_processes.push({
             operator: expression.operator,
-            right: ref_index >= 0 ? { value: operand, ref_index } : { value: operand, ref_index: (expression.operand as Variable).name },
+            right: operand,
             result,
             index: this.calc_processes_index++,
         })
